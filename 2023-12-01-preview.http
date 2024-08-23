@@ -1,0 +1,47 @@
+### using 2023-12-01-preview and /extensions/chat/completions, dataSources
+
+POST https://{{$dotenv AOAI_RESOURCE_NAME}}.openai.azure.com/openai/deployments/{{$dotenv AOAI_DEPLOYMENT_NAME}}/extensions/chat/completions?api-version=2023-12-01-preview
+Content-Type: application/json
+api-key: {{$dotenv AOAI_KEY}}
+
+{
+    "enhancements": {
+            "ocr": {
+              "enabled": true
+            },
+            "grounding": {
+              "enabled": true
+            }
+    },
+    "dataSources": [
+    {
+        "type": "AzureComputerVision",
+        "parameters": {
+            "endpoint": "{{$dotenv VISION_ENDPOINT}}",
+            "key": "{{$dotenv VISION_KEY}}"
+        }
+    }],
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant."
+        },
+        {
+            "role": "user",
+            "content": [
+	            {
+	                "type": "text",
+	                "text": "Describe this picture:"
+	            },
+	            {
+	                "type": "image_url",
+	                "image_url": {
+                        "url":"{{$dotenv IMAGE_URL}}" 
+                    }
+                }
+           ] 
+        }
+    ],
+    "max_tokens": 100, 
+    "stream": false 
+}
